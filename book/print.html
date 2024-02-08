@@ -177,17 +177,7 @@
                         <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="foreword"><a class="header" href="#foreword">Foreword</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="motion-control"><a class="header" href="#motion-control">Motion Control</a></h1>
-<div style="break-before: page; page-break-before: always;"></div><hr />
-<h2>title: Basic Odometry
-author: Tropix
-date: 2024-01-24 10:12:00 -0700
-categories: [Odometry, Introductory]
-tags: [software,odometry]     # TAG names should always be lowercase
-image:
-path: https://i.postimg.cc/grFzjG4w/Tropical-pfp.png
-width: 640 #correct image size
-height: 480</h2>
-<h1 id="odometry"><a class="header" href="#odometry">Odometry</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="odometry"><a class="header" href="#odometry">Odometry</a></h1>
 <p><em>How does a robot know where it is?</em></p>
 <p>Odometry is a method of tracking the absolute position of a robot on a field using sensor data. While it's often viewed as a complicated process, the code behind it can be relatively simple. This tutorial explains the math behind odometry and outlines how to create a basic position tracking function that works similarly to the one used in taolib.</p>
 <h2 id="the-basics"><a class="header" href="#the-basics">The basics</a></h2>
@@ -418,13 +408,7 @@ constexpr double tracking_wheel_circumference = 2 * M_PI * tracking_wheel_radius
 double average_encoder_position = (LeftEncoder.position(vex::degrees) + RightEncoder.position(vex::degrees)) / 2;
 double distance_traveled = (average_encoder_position / 360) * tracking_wheel_circumference;
 </code></pre>
-<div style="break-before: page; page-break-before: always;"></div><hr />
-<h2>title: Basic PID
-author: Prahas
-date: 2024-02-2 08:03:00 -0700
-categories: [PID, Introductory]
-tags: [software, pid, beginner]     # TAG names should always be lowercase</h2>
-<h1 id="pid"><a class="header" href="#pid">PID</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="pid"><a class="header" href="#pid">PID</a></h1>
 <p><em>How do you control motors quickly and efficiently?</em></p>
 <p>PID is a method of controlling motors using sensor data. While it's often viewed as a complicated process, the code behind it can be relatively simple. This tutorial explains the math behind PID and outlines how to create a basic PID controller similar to ones used in large libraries like LemLib and JAR.</p>
 <p>PID stands for</p>

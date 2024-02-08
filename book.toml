@@ -1,0 +1,12 @@
+[book]
+authors = ["glowingvoices"]
+language = "en"
+multilingual = false
+src = "src"
+title = "Ink Bottled Lemonade"
+text-direction = "ltr"
+
+[preprocessor.random]
+command = "python random.py"
+after = [ "links" ]
+renderers = ["html"]  # example preprocessor only runs with the HTML renderer

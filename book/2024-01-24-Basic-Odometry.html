@@ -1,0 +1,484 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Basic Odometry - Ink Bottled Lemonade</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><li class="part-title">Introduction</li><li class="chapter-item expanded "><a href="index.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="FOREWORD.html"><strong aria-hidden="true">2.</strong> Foreword</a></li><li class="chapter-item expanded affix "><li class="part-title">Articles</li><li class="chapter-item expanded "><a href="boomerang.html"><strong aria-hidden="true">3.</strong> Motion Control</a></li><li class="chapter-item expanded "><a href="2024-01-24-Basic-Odometry.html" class="active"><strong aria-hidden="true">4.</strong> Basic Odometry</a></li><li class="chapter-item expanded "><a href="2024-2-2-Basic-PID.html"><strong aria-hidden="true">5.</strong> Basic PID</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="2024-02-06-Bang-Bang.html"><strong aria-hidden="true">5.1.</strong> Bang Bang</a></li><li class="spacer"></li></ol></li><li class="chapter-item expanded "><a href="Contributors.html">Contributors</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Ink Bottled Lemonade</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <hr />
+<h2>title: Basic Odometry
+author: Tropix
+date: 2024-01-24 10:12:00 -0700
+categories: [Odometry, Introductory]
+tags: [software,odometry]     # TAG names should always be lowercase
+image:
+path: https://i.postimg.cc/grFzjG4w/Tropical-pfp.png
+width: 640 #correct image size
+height: 480</h2>
+<h1 id="odometry"><a class="header" href="#odometry">Odometry</a></h1>
+<p><em>How does a robot know where it is?</em></p>
+<p>Odometry is a method of tracking the absolute position of a robot on a field using sensor data. While it's often viewed as a complicated process, the code behind it can be relatively simple. This tutorial explains the math behind odometry and outlines how to create a basic position tracking function that works similarly to the one used in taolib.</p>
+<h2 id="the-basics"><a class="header" href="#the-basics">The basics</a></h2>
+<p>The general idea behind tracking the robot's position is as follows:</p>
+<ul>
+<li>Measure the total distance that the robot has traveled using wheel encoders.</li>
+<li>Measure the absolute heading of the robot using either encoders or a gyroscope (we'll be using the <a href="https://www.vexrobotics.com/276-4855.html">V5 Inertial Sensor</a>).</li>
+<li>Create a loop that measures the distance that our wheel encoders have traveled from the last loop run, then imagine that distance as the hypotenuse of a right triangle. The robot's current heading at the time of the loop is the base angle of the triangle.</li>
+<li>By forming this triangle, some basic trigonometry can be used to find the length of the triangle's opposite and ajacent sides. The length of these sides are how far the robot has traveled in the X and Y direction.</li>
+<li>Repeat this process using our loop at a very fast rate (ideally once every 10 milliseconds).</li>
+</ul>
+<p>To visualize the last two steps, let's use an image:</p>
+<p><img src="https://i.imgur.com/4Edofqi.png" alt="Odometry Math" /></p>
+<p>To find the change in X and Y, we'll use the following formulas.</p>
+<pre><code class="language-cpp">change_in_x = change_in_distance * cos(heading)
+change_in_y = change_in_distance * sin(heading)
+</code></pre>
+<h2 id="lets-write-an-implementation"><a class="header" href="#lets-write-an-implementation">Let's write an implementation</a></h2>
+<h3 id="finding-wheel-travel"><a class="header" href="#finding-wheel-travel">Finding Wheel Travel</a></h3>
+<p>The first step is measuring how far the wheels have traveled forward or backward. This can be done using motor encoders.</p>
+<p>We can get the degrees of travel from each encoder using <code>Motor.position(vex::degrees)</code> (this also works for motor groups). For the most accuracy, we'll take the average of all motors in the drivetrain and use that as our total distance value.</p>
+<pre><code class="language-cpp">double average_encoder_position = (LeftMotors.position(vex::degrees) + RightMotors.position(vex::degrees)) / 2;
+</code></pre>
+<p>Now we have data on how far the encoders have turned in degrees, but how do we convert those degrees to a distance unit like inches?</p>
+<p>Every time a motor encoder spins a full 360 degrees (1 "revolution"), the drivetrain will have traveled the circumference of the wheel being driven. We aren't quite done yet, though. If the drivetrain has a <a href="https://wiki.purduesigbots.com/hardware/design-fundamentals/gear-ratios">gear ratio</a>, then we need to factor that into the distance equation. The final formula for degrees to distace is <code>(average_encoder_position / 360) * wheel_circumference * external_gear_ratio)</code>.</p>
+<pre><code class="language-cpp">#include &lt;cmath&gt;
+
+constexpr double gear_ratio = ((double)84/60); // Using an 84/60 gear ratio for this example.
+constexpr double wheel_radius = 2;
+constexpr double wheel_circumference = 2 * M_PI * wheel_radius;
+
+double average_encoder_position = (LeftMotors.position(vex::degrees) + RightMotors.position(vex::degrees)) / 2;
+double distance_traveled = (average_encoder_position / 360) * wheel_circumference * gear_ratio;
+</code></pre>
+<h3 id="finding-heading"><a class="header" href="#finding-heading">Finding Heading</a></h3>
+<p>The next thing we need is to determine where the robot is facing. The easiest way is to use the gyroscope of the <a href="https://www.vexrobotics.com/276-4855.html">V5 Inertial Sensor</a>, so we'll go over that first.</p>
+<blockquote>
+<p><em>WARNING:</em> Be sure to <a href="https://www.vexforum.com/t/how-do-i-calibrate-inertial-sensor-in-pre-auton/74040">calibrate your Inertial Sensor</a> at the start of <code>pre_auton</code>, or else the headings that it reports will be wrong!</p>
+</blockquote>
+<p>You can find the absolute heading of the drivetrain in degrees using the <code>Inertial.heading(vex::degrees)</code> function. There are a few things wrong with this value, though. First, the sensor reports heading as increasing in the clockwise direction, meaning that heading will <em>increase</em> as the robot turns <em>right</em>. For the purposes of position tracking, this will alter how our robot's coordinates are reported, so this value will need to be converted to a counterclockwise angle.</p>
+<pre><code class="language-cpp">double heading = 360 - Inertial.heading(vex::degrees);
+</code></pre>
+<p>The next problem is that the sensor treats "0 degrees" as the robot's starting angle. This is generally a bad idea for position tracking, because we want "forward" to be up on the y-axis for easy visualization. <strong>In most cases, you want to imagine the robot's starting angle as 90 degrees.</strong></p>
+<p><img src="https://i.imgur.com/tZE6Mxy.png" alt="Starting at 0 degrees vs starting at 90 degrees" /></p>
+<p>To make this adjustment, we can simply add <code>90</code> to the heading value after converting it to coutnerclockwise degrees. We'll also use the <code>std::fmod</code> function of the standard library to wrap the heading back to 0 once we reach 360 degrees after offsetting.</p>
+<pre><code class="language-cpp">#include &lt;cmath&gt;
+
+double start_heading = 90;
+
+// Using std::fmod to preserve the "wraparound effect" of 0-360 degrees when considering the offset of start heading.
+double heading = std::fmod((360 - Inertial.heading(vex::degrees)) + start_heading, 360);
+</code></pre>
+<h3 id="finding-heading-without-an-inertial-sensor"><a class="header" href="#finding-heading-without-an-inertial-sensor">Finding Heading (without an inertial sensor)</a></h3>
+<p>If you don't have access to an inertial sensor, then absolute heading <em>can</em> be estimated using wheel encoders only. Keep in mind that this will be less accurate than if you had an appropriate sensor.</p>
+<p>The formula for finding heading with encoders is as follows:</p>
+<pre><code>heading_in_radians = (right_distance - left_distance) / track_width
+</code></pre>
+<p>Right and left distances can be found similarly to how <code>distance_traveled</code> is found, but using only one side of the drivetrain.</p>
+<pre><code class="language-cpp">double left_distance = (LeftMotors.position(vex::degrees) / 360) * wheel_circumference * external_gear_ratio;
+double right_distance = (LeftMotors.position(vex::degrees) / 360) * wheel_circumference * external_gear_ratio;
+</code></pre>
+<p>Next we need to find track width. Track width is a measurement of the distance between the center of your left and right wheels. This measurement will be unique to different drivetrains, and should be measured in the same units that <code>wheel_radius</code> is measured with.</p>
+<p><img src="https://kb.vex.com/hc/article_attachments/360085801912/track_width.jpg" alt="Track width measurement" /></p>
+<p>For the purpose of example, let's say our track width is 13.75 inches. We can now find our absolute heading in radians.</p>
+<pre><code class="language-cpp">constexpr double track_width = 13.75;
+
+double left_distance = (LeftMotors.position(vex::degrees) / 360) * wheel_circumference * external_gear_ratio;
+double right_distance = (LeftMotors.position(vex::degrees) / 360) * wheel_circumference * external_gear_ratio;
+
+double heading_in_radians = (right_distance - left_distance) / track_width;
+</code></pre>
+<p>The next step is to convert the heading to degrees and restrict it to 0 &lt;= x &lt; 360 (if the heading exceeds 360 degrees it will be reset to 0). This will mimick the heading reported by an inertial sensor's gyro.</p>
+<p>We'll also add a <code>start_heading</code> of 90 degrees (explained in the previous section).</p>
+<pre><code class="language-cpp">#include &lt;cmath&gt;
+
+constexpr double track_width = 13.75;
+constexpr double start_heading = 90;
+
+double left_distance = (LeftMotors.position(vex::degrees) / 360) * wheel_circumference * external_gear_ratio;
+double right_distance = (LeftMotors.position(vex::degrees) / 360) * wheel_circumference * external_gear_ratio;
+
+double heading_in_radians = (right_distance - left_distance) / track_width;
+
+double heading = std::fmod((360 - (heading_in_radians * (180 / M_PI))) + start_heading, 360);
+</code></pre>
+<h2 id="making-a-loop"><a class="header" href="#making-a-loop">Making a loop</a></h2>
+<p>Now that we can measure the correct heading and distance values, let's put these together into a loop that can track the change in X and Y position.</p>
+<p>We can create a basic loop inside of a function like so:</p>
+<pre><code class="language-cpp">#include "vex.h"
+
+double x = 0;
+double y = 0;
+
+void odometry() {
+    while (true) {
+        vex::this_thread::sleep_for(10);
+    }
+}
+</code></pre>
+<p>This creates a <code>while</code>-loop that will run forever and wait 10 milliseconds in between each cycle. We store global <code>x</code> and <code>y</code> variables for keeping track the robot's absolute x and y position.</p>
+<blockquote>
+<p>We wait 10 milliseconds for two reasons. First, an infinite loop on the V5 Brain without a wait condition will hog resources until the program freezes. Second, motor encoders can only report their values once every 10 milliseconds, meaning it would be wasteful to run these calculations any faster.</p>
+</blockquote>
+<p>We can now introduce our sensor readings to the loop.</p>
+<pre><code class="language-cpp">#include &lt;cmath&gt;
+#include "vex.h"
+
+constexpr double gear_ratio = ((double)84/60); // Using an 84/60 gear ratio for this example.
+constexpr double wheel_radius = 2;
+constexpr double wheel_circumference = 2 * M_PI * wheel_radius;
+constexpr double start_heading = 90;
+
+double x = 0;
+double y = 0;
+
+void odometry() {
+    LeftMotors.resetPosition();
+    RightMotors.resetPosition();
+
+    while (true) {
+        double heading = std::fmod((360 - Inertial.heading(vex::degrees)) + start_heading, 360);
+
+        double average_encoder_position = (LeftMotors.position(vex::degrees) + RightMotors.position(vex::degrees)) / 2;
+        double distance_traveled = (average_encoder_position / 360) * wheel_circumference * gear_ratio;
+
+        vex::this_thread::sleep_for(10);
+    }
+}
+</code></pre>
+<p>Every time the loop runs we'll find the new heading and travel distance. These are the numbers that will eventually be used for the odometry formula.</p>
+<h3 id="putting-it-together"><a class="header" href="#putting-it-together">Putting it together</a></h3>
+<p>Let's perform the odometry calculations to find the change in x and y position. The calculations use our absolute heading and the distance that the robot has traveled since the <em>last loop cycle</em> (Δdistance).</p>
+<p>We can find this change distance by storing the distance that the robot traveled at the start of the last loop cycle, and subtracting it from the current distance reading in the next cycle.</p>
+<pre><code class="language-cpp">void odometry() {
+    LeftMotors.resetPosition();
+    RightMotors.resetPosition();
+
+    double previous_distance_traveled = 0;
+
+    while (true) {
+        ...
+        double distance_traveled = (average_encoder_position / 360) * wheel_circumference * gear_ratio;
+        double change_in_distance = distance_traveled - previous_distance_traveled;
+
+        ...
+
+        // At the end of the loop, set previous_distance_traveled for the next loop iteration
+        previous_distance_traveled = distance_traveled;
+
+        vex::this_thread::sleep_for(10);
+    }
+}
+</code></pre>
+<p>This effectively tells us how far the robot has traveled in the 10 milliseconds it took to calculate the new positions. Now that we have this reading, we can use it to find our change in x and y.</p>
+<blockquote>
+<p>Keep in mind that C++'s trig functions operate on radians, so when providing heading we should multiply <code>heading</code> by <code>M_PI / 180</code> to convert degrees to radians.</p>
+</blockquote>
+<pre><code class="language-cpp">x += change_in_distance * std::cos(heading * (M_PI / 180));
+y += change_in_distance * std::sin(heading * (M_PI / 180));
+</code></pre>
+<p>Adding everything together, your loop should now look like this:</p>
+<pre><code class="language-cpp">#include &lt;cmath&gt;
+#include "vex.h"
+
+constexpr double gear_ratio = ((double)84/60); // Using an 84/60 gear ratio for this example.
+constexpr double wheel_radius = 2;
+constexpr double wheel_circumference = 2 * M_PI * wheel_radius;
+constexpr double start_heading = 90;
+
+double x = 0;
+double y = 0;
+
+void odometry() {
+    LeftMotors.resetPosition();
+    RightMotors.resetPosition();
+
+    double previous_distance_traveled = 0;
+
+    while (true) {
+        double heading = std::fmod((360 - Inertial.heading(vex::degrees)) + start_heading, 360);
+
+        double average_encoder_position = (LeftMotors.position(vex::degrees) + RightMotors.position(vex::degrees)) / 2;
+        double distance_traveled = (average_encoder_position / 360) * wheel_circumference * gear_ratio;
+
+        double change_in_distance = distance_traveled - previous_distance_traveled;
+        
+        x += change_in_distance * std::cos(heading * (M_PI / 180));
+        y += change_in_distance * std::sin(heading * (M_PI / 180));
+
+        // At the end of the loop, set previous_distance_traveled for the next loop iteration
+        previous_distance_traveled = distance_traveled;
+
+        vex::this_thread::sleep_for(10);
+    }
+}
+</code></pre>
+<p>We now have a loop that will track the robot's absolute coordinates. But what next? How should we run it?</p>
+<h3 id="starting-odometry-as-a-thread"><a class="header" href="#starting-odometry-as-a-thread">Starting odometry as a thread</a></h3>
+<p>To use the coordinates found in our loop, we want to run the <code>odometry</code> function in the background. We do this using a technique called <a href="https://en.wikipedia.org/wiki/Multithreading_(computer_architecture)">threading</a>. Using a separate thread means we can get position updates while moving the robot around or running an autonomous routine.</p>
+<p>We'll start our odometry thread at the beginning of the autonomous period by creating a <code>vex::thread</code> instance, and passing in our <code>odometry</code> function:</p>
+<pre><code class="language-cpp">// Autonomous function found in the VEX competition template
+// If you aren't using the competition template, feel free to start this in main().
+void autonomous() {
+    // Start our odometry thread.
+    // The odometry loop will run in the background while we move.
+    vex::thread odometry_thread(odometry);
+
+    // Spin our drivetrain forward for 2 seconds.
+    LeftMotors.spin(vex::forward);
+    RightMotors.spin(vex::forward);
+
+    vex::wait(2, vex::seconds);
+
+    LeftMotors.stop();
+    RightMotors.stop();
+
+    // Print where we ended up on the coordinate plane onto the brain screen.
+    Brain.Screen.print("(%f, %f)", x, y);
+}
+</code></pre>
+<h3 id="tracking-wheels"><a class="header" href="#tracking-wheels">Tracking Wheels</a></h3>
+<p>Some teams may opt to use tracking wheels rather than integrated motor encoders. These are unpowered wheels attached to the bottom of the drivetrain that are hooked to external encoders. Using deadwheels has the advantage of preventing wheel slipping from messing up the readings for finding wheel travel distance.</p>
+<p><img src="https://www.vexforum.com/uploads/default/original/2X/a/a90abb6db94c9fe8bddc0c284bc9f69bda97bd6e.png" alt="Tracking wheels" /></p>
+<p>The math for finding distance traveled using tracking wheels is almost exactly the same as with motor encoders, except tracking wheels always have an implied 1:1 gear ratio:</p>
+<pre><code class="language-cpp">constexpr double tracking_wheel_radius = 2;
+constexpr double tracking_wheel_circumference = 2 * M_PI * tracking_wheel_radius;
+
+double average_encoder_position = (LeftEncoder.position(vex::degrees) + RightEncoder.position(vex::degrees)) / 2;
+double distance_traveled = (average_encoder_position / 360) * tracking_wheel_circumference;
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="boomerang.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="2024-2-2-Basic-PID.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="boomerang.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="2024-2-2-Basic-PID.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <!-- Livereload script (if served using the cli tool) -->
+        <script>
+            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
+            const socket = new WebSocket(wsAddress);
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
+
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

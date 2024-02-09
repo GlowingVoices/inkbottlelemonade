@@ -3,8 +3,28 @@ from yaml_functions import *
 
 def log(input):
     f = open("logs.txt","a")
-    f.write(str(input) + "\n")
+    f.write(str(input) + "\n\n")
     f.close()
+
+
+#given an input dictionary, clean it's subitems.
+def recursive_clean(settler):
+    string_contents = settler['Chapter']['content']
+
+    #This is what we will edit -> this line becoems return & edit the content
+    settler['Chapter']['content'] = remove_jekyll_frontmatter(settler['Chapter']['content'])
+
+    """
+    if isinstance(settler,dict) and "sub_items" in settler['Chapter']:
+        log(type(settler['Chapter']))
+        log(settler['Chapter'])
+        recursive_clean(settler['Chapter']['sub_items'])
+        """
+
+    if 'sub_items' in settler['Chapter'] and settler['Chapter']['sub_items']:
+        for sub_item in settler['Chapter']['sub_items']:
+            recursive_clean(sub_item)
+
 
 if __name__ == '__main__':
     if len(sys.argv) > 1: # we check if we received any argument
@@ -39,16 +59,13 @@ if __name__ == '__main__':
     """
     #log(book_sections)
     #log(type(json_pre_book['sec
-
     for every in book['sections']:
         #if(str(type(every))=="<class 'dict'>"): #inside the third dictionary now
         if isinstance(every, dict): #pythonic way to check the type
-            chapter_dictionary = every
-            if 'Chapter' in chapter_dictionary:
-                string_contents = chapter_dictionary['Chapter']['content']
-                log(return_jekyll_frontmatter(string_contents))
-                every['Chapter']['content'] = remove_jekyll_frontmatter(string_contents)
+            if 'Chapter' in every:
+                recursive_clean(every)
 
+                #subsections (e.g. Bang-bang of PID) load as part of the PID json set
 
             #log(chapter_dictionary)
             #log(type(chapter_dictionary))

@@ -1,18 +1,61 @@
 import sys
 from yaml_functions import *
+from datetime import datetime
 
 def log(input):
     f = open("logs.txt","a")
     f.write(str(input) + "\n\n")
     f.close()
 
+def reformat_date(date_str):
+    # Convert the string to a datetime object
+    datetime_obj = datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S %z")
+
+    # Reformat the date without time
+    reformatted_date = datetime_obj.strftime("%a %b %d %Y")
+
+    return reformatted_date
 
 #given an input dictionary, clean it's subitems.
 def recursive_clean(settler):
     string_contents = settler['Chapter']['content']
 
     #This is what we will edit -> this line becoems return & edit the content
+    fm = return_jekyll_frontmatter(settler['Chapter']['content'])
     settler['Chapter']['content'] = remove_jekyll_frontmatter(settler['Chapter']['content'])
+
+    #We're going to use this to update the post name from the file
+    #and also to add in author info and date of edit/upload
+
+    #if 'title' in fm:
+    #    log(fm['title'])
+
+    #log(settler['Chapter']['name'])
+
+    if 'title' in fm:
+        #log(fm['title'])
+        settler['Chapter']['name'] = fm['title']
+
+
+    addendum = ""
+    if 'author' in fm:
+        addendum += "\n" + "**author:** "  +fm['author']
+
+    if 'date' in fm:
+        addendum += "\n\n" + "**date:** " +reformat_date(fm['date'])
+
+    hash_index = settler['Chapter']['content'].find("#")
+    n_index = settler['Chapter']['content'].find("\n", hash_index)
+
+    # Insert the addendum at the line break index
+    settler['Chapter']['content'] = settler['Chapter']['content'][:n_index] + addendum + settler['Chapter']['content'][n_index:]
+
+    log(settler['Chapter']['content'])
+
+
+
+    #so if the yaml has a title, it'll use that title instead of the one defined in the initialization summary
+
 
     """
     if isinstance(settler,dict) and "sub_items" in settler['Chapter']:
@@ -70,7 +113,6 @@ if __name__ == '__main__':
             #log(chapter_dictionary)
             #log(type(chapter_dictionary))
             #the non-string is a separator
-
 
     #FINALLY
         #Okay, so the structure of the input it dictionary -> list -> dictionary

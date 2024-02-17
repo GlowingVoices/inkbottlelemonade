@@ -49,9 +49,7 @@ def recursive_clean(settler):
 
     # Insert the addendum at the line break index
     settler['Chapter']['content'] = settler['Chapter']['content'][:n_index] + addendum + settler['Chapter']['content'][n_index:]
-
     log(settler['Chapter']['content'])
-
 
 
     #so if the yaml has a title, it'll use that title instead of the one defined in the initialization summary

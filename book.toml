@@ -6,6 +6,9 @@ src = "src"
 title = "Ink Bottled Lemonade"
 text-direction = "ltr"
 
+[output.html]
+mathjax-support = true
+
 [preprocessor.random]
 command = "python random.py"
 after = [ "links" ]

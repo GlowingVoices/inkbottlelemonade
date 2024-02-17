@@ -1,1 +1,1 @@
-# Motion Control
+# Motion Profiling

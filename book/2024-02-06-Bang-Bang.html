@@ -30,6 +30,8 @@
 
         <!-- Custom theme stylesheets -->
 
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     </head>
     <body class="sidebar-visible no-js">
     <div id="body-container">
@@ -88,7 +90,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><li class="part-title">Introduction</li><li class="chapter-item expanded "><a href="index.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="FOREWORD.html"><strong aria-hidden="true">2.</strong> Foreword</a></li><li class="chapter-item expanded affix "><li class="part-title">Articles</li><li class="chapter-item expanded "><a href="boomerang.html"><strong aria-hidden="true">3.</strong> Motion Control</a></li><li class="chapter-item expanded "><a href="2024-01-24-Basic-Odometry.html"><strong aria-hidden="true">4.</strong> Basic Odometry</a></li><li class="chapter-item expanded "><a href="2024-2-2-Basic-PID.html"><strong aria-hidden="true">5.</strong> Basic PID</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="2024-02-06-Bang-Bang.html" class="active"><strong aria-hidden="true">5.1.</strong> Bang Bang</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="asdasd.html"><strong aria-hidden="true">5.1.1.</strong> Bing Bang</a></li><li class="spacer"></li></ol></li></ol></li><li class="chapter-item expanded "><a href="Contributors.html">Contributors</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><li class="part-title">Introduction</li><li class="chapter-item expanded "><a href="index.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="FOREWORD.html"><strong aria-hidden="true">2.</strong> Foreword</a></li><li class="chapter-item expanded affix "><li class="part-title">Articles</li><li class="chapter-item expanded "><a href="boomerang.html"><strong aria-hidden="true">3.</strong> Motion Profiling</a></li><li class="chapter-item expanded "><a href="2024-01-24-Basic-Odometry.html"><strong aria-hidden="true">4.</strong> the name doesn't matter because it gets replaced by the title from yaml</a></li><li class="chapter-item expanded "><a href="2024-2-2-Basic-PID.html"><strong aria-hidden="true">5.</strong> Basic PID</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="2024-02-06-Bang-Bang.html" class="active"><strong aria-hidden="true">5.1.</strong> Bang Bang</a></li><li class="spacer"></li></ol></li><li class="chapter-item expanded "><a href="Contributors.html">Contributors</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -173,41 +175,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="bang-bang-controllers"><a class="header" href="#bang-bang-controllers">Bang Bang Controllers</a></h1>
-<p>A Bang Bang Controller is a type of controller that decreases the amount of time it takes to reach the target speed by running motors at maximum power until they reach a certain threshold, after which it lapses control back to a PID loop.</p>
-<h2 id="one-directional-bang-bang-controller"><a class="header" href="#one-directional-bang-bang-controller">One-directional bang-bang controller</a></h2>
-<p>The following code is an example of a one-directional bang-bang controller that returns 127 when the current velocity is less than the threshold and returns the result of the PID calculation when the current velocity lies above the threshold.</p>
-<pre><code class="language-cpp">float one_directional_bang_bang(float current_value, float threshold, float target_value) {
-	if(current_value&lt;threshold) {
-		return 127;
-	}
-	else {
-		//assuming calculate(float current_value, float target_value) is a function that returns the pid calculation for a sensor reading.
-		return 	calculate(current_value, target_value);
-	}
-}
-</code></pre>
-<h2 id="two-directional-bang-bang-controller"><a class="header" href="#two-directional-bang-bang-controller">Two-directional bang-bang controller</a></h2>
-<p>An improvement over a one-directional controller is a two-directional controller; this will return control over the motor voltages to the bang-bang function whenever the abs(target-current) is greater than the threshold.</p>
-<p>The most important advantage of a 2d bang_bang is that it decreases the time taken to return to the target  when the current value is greater than said target.</p>
-<pre><code class="language-cpp">//returns the sign of the input value
-float signbit(float value) {
-	return (value &gt; 0) - (value &lt; 0);
-}
-
-float two_directional_bang_bang(float current_value, float threshold, float target_value) {
-	float error = target_value - current_value;
-	if(abs(error)&gt;threshold) {
-		return sgn(error)*127;
-	}
-	else {
-		//assuming calculate(float current_value, float target_value) is a function that returns the pid calculation for a sensor reading.
-		return 	calculate(current_value, target_value);
-	}
-}
-
-</code></pre>
-<p>The 2 direction bang bang controller returns either + or - 127 (when active) depending on whether the error is positive or negative.</p>
+                        <h1 id="bang-bang"><a class="header" href="#bang-bang">Bang Bang</a></h1>
 
                     </main>
 
@@ -217,7 +185,7 @@ float two_directional_bang_bang(float current_value, float threshold, float targ
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="asdasd.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="Contributors.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -231,7 +199,7 @@ float two_directional_bang_bang(float current_value, float threshold, float targ
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="asdasd.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="Contributors.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
